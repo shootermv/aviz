@@ -25,34 +25,45 @@ function readfile(path, cb) {
 }
 
 // decode
-var entities = {
-  'amp': '&',
-  'apos': '\'',
-  '#x27': '\'',
-  '#x2F': '/',
-  '#39': '\'',
-  '#47': '/',
-  'lt': '<',
-  'gt': '>',
-  'nbsp': ' ',
-  'quot': '"',
-  '#xD': ' ',
-  '#xA': ' ',
-  '#xFFFD': ' '
-}
-
 function decodeHTMLEntities (text) {
+  const entities = {
+    'amp': '&',
+    'apos': '\'',
+    '#x27': '\'',
+    '#x2F': '/',
+    '#39': '\'',
+    '#47': '/',
+    'lt': '<',
+    'gt': '>',
+    'nbsp': ' ',
+    'quot': '"',
+    '#xD': ' ',
+    '#xA': ' ',
+    '#xFFFD': ' '
+  }
   return text.replace(/&([^;]+);/gm, function (match, entity) {
     return entities[entity] || match
   }).replace(/\s+/g,'').replace(/[\,|\.|\"|\*]+/g,'');
 }
 
+// save
+function wirteFile(name, content) {
+  fs.writeFile(name.replace('./files', './out'), content, function(err) {
+      if(err) {
+          return console.log(err);
+      }
 
+      console.log(`The file ${name} was saved!`);
+  }); 
+}
 
-readfile('./files/R0071015a.html', (input) => {
+const file = './files/R0071015a.html';
+
+readfile(file, (input) => {
   send_request(input, (output) => {
     const out = extract_output(output)
-    console.log(decodeHTMLEntities(out));
+    const decoded = decodeHTMLEntities(out);
+    wirteFile(file, decoded);
   });
 });
 
