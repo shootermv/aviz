@@ -48,7 +48,7 @@ function decodeHTMLEntities (text) {
 
 // save
 function wirteFile(name, content) {
-  fs.writeFile(name.replace('./files', './out'), content, function(err) {
+  fs.writeFile('./out/' + name, content, function(err) {
       if(err) {
           return console.log(err);
       }
@@ -57,15 +57,17 @@ function wirteFile(name, content) {
   }); 
 }
 
-const file = './files/R0071015a.html';
+const folder = './files/';
 
-readfile(file, (input) => {
-  send_request(input, (output) => {
-    const out = extract_output(output)
-    const decoded = decodeHTMLEntities(out);
-    wirteFile(file, decoded);
+fs.readdirSync(folder).forEach(file => {
+ 
+  readfile(folder + file, (input) => {
+    send_request(input, (output) => {
+      const decoded = decodeHTMLEntities(extract_output(output));
+      wirteFile(file, decoded);
+    });
   });
-});
+})
 
 
 
